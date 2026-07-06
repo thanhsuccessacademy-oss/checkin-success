@@ -35,7 +35,7 @@ export async function getTimesheetMatrix(year: number, month: number) {
     const empSheet = await getSheet('NhanVien')
     const empRows = await empSheet.getRows()
     employees = empRows
-      .filter((row) => (row.get('Role') || 'employee').trim().toLowerCase() !== 'admin')
+      .filter((row) => (row.get('Role') || 'employee').trim().toLowerCase() === 'employee')
       .map((row) => ({
         email: (row.get('Email') || '').trim().toLowerCase(),
         fullName: row.get('FullName') || 'Nhân viên',

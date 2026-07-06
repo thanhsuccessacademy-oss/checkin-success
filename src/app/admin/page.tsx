@@ -80,11 +80,13 @@ export default async function AdminPage() {
   try {
     const employeeSheet = await getSheet('NhanVien')
     const empRows = await employeeSheet.getRows()
-    employees = empRows.map((row) => ({
-      email: row.get('Email') || '',
-      fullName: row.get('FullName') || '',
-      role: row.get('Role') || 'employee',
-    }))
+    employees = empRows
+      .filter((row) => (row.get('Role') || 'employee').trim().toLowerCase() === 'employee')
+      .map((row) => ({
+        email: row.get('Email') || '',
+        fullName: row.get('FullName') || '',
+        role: row.get('Role') || 'employee',
+      }))
   } catch (error) {
     console.error('Error fetching employees in admin page:', error)
   }

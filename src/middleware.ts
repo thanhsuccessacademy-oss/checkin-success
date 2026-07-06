@@ -37,6 +37,19 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
+    if (path.startsWith('/dashboard')) {
+      if (session.role === 'admin') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/admin'
+        return NextResponse.redirect(url)
+      }
+      if (session.role === 'hanhchinh') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/hr'
+        return NextResponse.redirect(url)
+      }
+    }
+
     if (path.startsWith('/admin') && session.role !== 'admin') {
       // Non-admin trying to access admin panel
       const url = request.nextUrl.clone()
