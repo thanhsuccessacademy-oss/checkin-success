@@ -108,7 +108,7 @@ function LoginForm() {
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-500 hover:to-indigo-500 text-white shadow-md shadow-indigo-600/10"
+              className="w-full bg-[#104275] hover:bg-[#0d345c] text-white font-semibold transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg cursor-pointer"
             >
               {isPending ? (
                 <span className="flex items-center gap-2">

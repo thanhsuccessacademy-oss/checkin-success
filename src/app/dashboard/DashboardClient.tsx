@@ -75,6 +75,25 @@ export default function DashboardClient({
   const [isLocating, setIsLocating] = useState(false)
   const [shiftState, setShiftState] = useState(shiftInfo)
 
+  const getVnDateKey = (date: Date = new Date()) => {
+    const vnTimeStr = date.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
+    const d = new Date(vnTimeStr)
+    const y = d.getFullYear()
+    const m = (d.getMonth() + 1).toString().padStart(2, '0')
+    const day = d.getDate().toString().padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  const todayStr = getVnDateKey(new Date())
+  const hasCheckedInCurrentShift = !!(
+    shiftState.eligible &&
+    shiftState.shift &&
+    history.some((log) => {
+      const logDateKey = getVnDateKey(new Date(log.check_in_time))
+      return logDateKey === todayStr && log.shift === shiftState.shift
+    })
+  )
+
   // Change Password States
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [oldPassword, setOldPassword] = useState('')
@@ -405,22 +424,28 @@ export default function DashboardClient({
 
             <Button
               onClick={handleCheckIn}
-              disabled={!shiftState.eligible || isLocating}
-              className={`w-full py-6 rounded-xl relative overflow-hidden group cursor-pointer transition-all duration-200 ease-in-out ${
-                shiftState.eligible
+              disabled={!shiftState.eligible || isLocating || hasCheckedInCurrentShift}
+              className={`w-full py-6 rounded-xl relative overflow-hidden group cursor-pointer transition-all duration-200 ease-in-out ${hasCheckedInCurrentShift
+                ? 'bg-[#104275] opacity-60 cursor-not-allowed hover:bg-[#104275] text-white font-bold shadow-none'
+                : shiftState.eligible
                   ? 'bg-[#104275] hover:bg-[#0d345c] active:scale-95 text-white font-bold shadow-md hover:shadow-lg'
                   : 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
-              }`}
+                }`}
             >
               {isLocating ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Đang quét GPS...
+                  Đang CHECK-IN...
+                </span>
+              ) : hasCheckedInCurrentShift ? (
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 opacity-80" />
+                  ĐÃ CHECK-IN CA {shiftState.shift === 'morning' ? 'SÁNG' : 'CHIỀU'}
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 animate-pulse" />
-                  XÁC NHẬN CHECK-IN GẦN ĐÂY
+                  CHECK-IN
                 </span>
               )}
             </Button>
@@ -446,7 +471,7 @@ export default function DashboardClient({
             <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1">
               <History className="h-4 w-4 text-slate-400" /> Lịch sử check-in
             </h3>
-            
+
             <Dialog open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <Button
                 variant="outline"
@@ -479,11 +504,11 @@ export default function DashboardClient({
                           {d}
                         </div>
                       ))}
-                      
+
                       {Array.from({ length: new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay() }).map((_, i) => (
                         <div key={`empty-${i}`} className="w-10 h-10" />
                       ))}
-                      
+
                       {Array.from({ length: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() }).map((_, i) => {
                         const day = i + 1
                         const dayStr = day.toString().padStart(2, '0')
@@ -516,17 +541,15 @@ export default function DashboardClient({
                         return (
                           <div
                             key={day}
-                            className={`relative h-10 w-10 flex flex-col justify-between rounded-md overflow-hidden bg-slate-50 border ${
-                              isEvent
-                                ? 'border-violet-500 ring-1 ring-violet-500/50 shadow-[0_0_5px_rgba(139,92,246,0.25)]'
-                                : isCompOff
+                            className={`relative h-10 w-10 flex flex-col justify-between rounded-md overflow-hidden bg-slate-50 border ${isEvent
+                              ? 'border-violet-500 ring-1 ring-violet-500/50 shadow-[0_0_5px_rgba(139,92,246,0.25)]'
+                              : isCompOff
                                 ? 'border-slate-300'
                                 : 'border-slate-200'
-                            }`}
+                              }`}
                           >
-                            <div className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold z-10 select-none ${
-                              isColored ? 'text-white font-semibold' : 'text-slate-800'
-                            }`}>
+                            <div className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold z-10 select-none ${isColored ? 'text-white font-semibold' : 'text-slate-800'
+                              }`}>
                               {day}
                             </div>
                             <div className="flex flex-col h-full w-full">
@@ -584,12 +607,12 @@ export default function DashboardClient({
                           <span className="font-semibold text-indigo-650">
                             {monthlyStats.totalOnTime + monthlyStats.totalLate + monthlyStats.totalMissing > 0
                               ? Math.round(
-                                  ((monthlyStats.totalOnTime + monthlyStats.totalLate) /
-                                    (monthlyStats.totalOnTime +
-                                      monthlyStats.totalLate +
-                                      monthlyStats.totalMissing)) *
-                                    100
-                                )
+                                ((monthlyStats.totalOnTime + monthlyStats.totalLate) /
+                                  (monthlyStats.totalOnTime +
+                                    monthlyStats.totalLate +
+                                    monthlyStats.totalMissing)) *
+                                100
+                              )
                               : 100}
                             %
                           </span>
@@ -598,17 +621,16 @@ export default function DashboardClient({
                           <div
                             className="h-full bg-gradient-to-r from-violet-600 to-indigo-600 rounded-full"
                             style={{
-                              width: `${
-                                monthlyStats.totalOnTime + monthlyStats.totalLate + monthlyStats.totalMissing > 0
-                                  ? Math.round(
-                                      ((monthlyStats.totalOnTime + monthlyStats.totalLate) /
-                                        (monthlyStats.totalOnTime +
-                                          monthlyStats.totalLate +
-                                          monthlyStats.totalMissing)) *
-                                        100
-                                    )
-                                  : 100
-                              }%`,
+                              width: `${monthlyStats.totalOnTime + monthlyStats.totalLate + monthlyStats.totalMissing > 0
+                                ? Math.round(
+                                  ((monthlyStats.totalOnTime + monthlyStats.totalLate) /
+                                    (monthlyStats.totalOnTime +
+                                      monthlyStats.totalLate +
+                                      monthlyStats.totalMissing)) *
+                                  100
+                                )
+                                : 100
+                                }%`,
                             }}
                           />
                         </div>
@@ -640,22 +662,20 @@ export default function DashboardClient({
                       </TableCell>
                       <TableCell className="py-3">
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                            item.shift === 'morning'
-                              ? 'bg-sky-50 text-sky-700 border border-sky-100'
-                              : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
-                          }`}
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.shift === 'morning'
+                            ? 'bg-sky-50 text-sky-700 border border-sky-100'
+                            : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                            }`}
                         >
                           {item.shift === 'morning' ? 'Sáng' : 'Chiều'}
                         </span>
                       </TableCell>
                       <TableCell className="text-right py-3">
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                            item.status === 'on_time'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                              : 'bg-amber-50 text-amber-700 border border-amber-100'
-                          }`}
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${item.status === 'on_time'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                            : 'bg-amber-50 text-amber-700 border border-amber-100'
+                            }`}
                         >
                           {item.status === 'on_time' ? 'Đúng giờ' : 'Trễ giờ'}
                         </span>
