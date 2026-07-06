@@ -623,7 +623,7 @@ export default function AdminClient({ settings, checkIns, employees }: AdminClie
                               handleSetDayException(dateKey, 'event')
                               setActiveConfigDay(null)
                             }}
-                            className="text-[9px] bg-violet-650 hover:bg-violet-600 px-1 py-1.5 h-auto text-white leading-tight font-semibold cursor-pointer"
+                            className="text-[9px] bg-purple-600 text-white hover:bg-purple-700 transition-colors px-1 py-1.5 h-auto leading-tight font-semibold cursor-pointer"
                           >
                             Trực sự kiện
                           </Button>
