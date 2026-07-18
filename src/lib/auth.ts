@@ -7,7 +7,7 @@ const secretKey = new TextEncoder().encode(JWT_SECRET)
 export interface UserSession {
   email: string
   fullName: string
-  role: 'admin' | 'employee' | 'hanhchinh'
+  role: 'admin' | 'employee' | 'hanhchinh' | 'superadmin'
 }
 
 export async function encrypt(payload: any) {

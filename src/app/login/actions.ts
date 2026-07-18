@@ -54,7 +54,7 @@ export async function login(prevState: any, formData: FormData) {
     }
   }
 
-  const role = (employeeRow.get('Role') || 'employee').trim().toLowerCase() as 'admin' | 'employee' | 'hanhchinh'
+  const role = (employeeRow.get('Role') || 'employee').trim().toLowerCase() as 'admin' | 'employee' | 'hanhchinh' | 'superadmin'
   const fullName = employeeRow.get('FullName') || 'Nhân viên'
 
   // Encrypt and set HTTP-only session cookie
@@ -68,6 +68,8 @@ export async function login(prevState: any, formData: FormData) {
     redirect('/admin')
   } else if (role === 'hanhchinh') {
     redirect('/hr')
+  } else if (role === 'superadmin') {
+    redirect('/dashboard')
   } else {
     redirect('/dashboard')
   }

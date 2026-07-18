@@ -21,7 +21,7 @@ export async function updateSettingsAction(
     return { error: 'Chưa đăng nhập' }
   }
 
-  if (session.role !== 'admin') {
+  if (session.role !== 'admin' && session.role !== 'superadmin') {
     return { error: 'Bạn không có quyền thực hiện hành động này' }
   }
 
@@ -109,7 +109,7 @@ export async function createEmployeeAccount(prevState: any, formData: FormData) 
     return { error: 'Chưa đăng nhập hoặc phiên làm việc đã hết hạn' }
   }
 
-  if (session.role !== 'admin') {
+  if (session.role !== 'admin' && session.role !== 'superadmin') {
     return { error: 'Không có quyền tạo tài khoản nhân viên' }
   }
 
@@ -144,7 +144,7 @@ export async function createEmployeeAccount(prevState: any, formData: FormData) 
 
 export async function getScheduleExceptions(email: string) {
   const session = await getSession()
-  if (!session || session.role !== 'admin') {
+  if (!session || (session.role !== 'admin' && session.role !== 'superadmin')) {
     return { error: 'Không có quyền truy cập thông tin này' }
   }
 
@@ -179,7 +179,7 @@ export async function setScheduleException(
   note: string = ''
 ) {
   const session = await getSession()
-  if (!session || session.role !== 'admin') {
+  if (!session || (session.role !== 'admin' && session.role !== 'superadmin')) {
     return { error: 'Không có quyền thực hiện hành động này' }
   }
 

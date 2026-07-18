@@ -4,9 +4,8 @@ import { getSession } from '@/lib/auth'
 import { getSheet } from '@/lib/googleSheets'
 
 export async function getTimesheetMatrix(year: number, month: number) {
-  // 1. Verify session role (admin or hanhchinh only)
   const session = await getSession()
-  if (!session || (session.role !== 'admin' && session.role !== 'hanhchinh')) {
+  if (!session || (session.role !== 'admin' && session.role !== 'hanhchinh' && session.role !== 'superadmin')) {
     return { error: 'Không có quyền truy cập thông tin này' }
   }
 

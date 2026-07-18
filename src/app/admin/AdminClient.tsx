@@ -10,6 +10,7 @@ import {
 } from './actions'
 import { signOutEmployee } from '../dashboard/actions'
 import { Button } from '@/components/ui/button'
+import { SuperadminNav } from '@/components/SuperadminNav'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -45,6 +46,7 @@ import {
 } from 'lucide-react'
 
 interface AdminClientProps {
+  role: string
   settings: {
     maps_url: string
     latitude: number
@@ -61,7 +63,7 @@ interface AdminClientProps {
   employees: { email: string; fullName: string; role: string }[]
 }
 
-export default function AdminClient({ settings, checkIns, employees }: AdminClientProps) {
+export default function AdminClient({ role, settings, checkIns, employees }: AdminClientProps) {
   const [mapsUrl, setMapsUrl] = useState(settings.maps_url)
   const [radius, setRadius] = useState(settings.radius_meters)
   const [coords, setCoords] = useState({ lat: settings.latitude, lng: settings.longitude })
@@ -244,7 +246,7 @@ export default function AdminClient({ settings, checkIns, employees }: AdminClie
     <div className="min-h-screen bg-background flex flex-col text-foreground">
       {/* Top Header */}
       <header className="border-b border-slate-200/80 bg-white/70 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image
               src="/logo-success.png"
@@ -255,6 +257,8 @@ export default function AdminClient({ settings, checkIns, employees }: AdminClie
               priority
             />
           </div>
+
+          {role === 'superadmin' && <SuperadminNav />}
 
           <div className="flex items-center gap-4">
             <span className="text-xs text-indigo-650 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-full font-medium">

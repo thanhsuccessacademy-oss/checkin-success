@@ -10,7 +10,7 @@ export default async function HrPage() {
     redirect('/login')
   }
 
-  if (session.role !== 'admin' && session.role !== 'hanhchinh') {
+  if (session.role !== 'admin' && session.role !== 'hanhchinh' && session.role !== 'superadmin') {
     redirect('/dashboard')
   }
 
@@ -28,6 +28,7 @@ export default async function HrPage() {
 
   return (
     <HrClient
+      role={session.role}
       initialMatrix={initialMatrix}
       initialYear={initialYear}
       initialMonth={initialMonth}

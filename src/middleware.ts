@@ -50,14 +50,14 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    if (path.startsWith('/admin') && session.role !== 'admin') {
+    if (path.startsWith('/admin') && session.role !== 'admin' && session.role !== 'superadmin') {
       // Non-admin trying to access admin panel
       const url = request.nextUrl.clone()
       url.pathname = session.role === 'hanhchinh' ? '/hr' : '/dashboard'
       return NextResponse.redirect(url)
     }
 
-    if (path.startsWith('/hr') && session.role !== 'admin' && session.role !== 'hanhchinh') {
+    if (path.startsWith('/hr') && session.role !== 'admin' && session.role !== 'hanhchinh' && session.role !== 'superadmin') {
       // Regular employee trying to access HR panel
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'

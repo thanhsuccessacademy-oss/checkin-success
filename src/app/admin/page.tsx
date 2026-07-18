@@ -11,7 +11,7 @@ export default async function AdminPage() {
     redirect('/login')
   }
 
-  if (session.role !== 'admin') {
+  if (session.role !== 'admin' && session.role !== 'superadmin') {
     redirect('/dashboard')
   }
 
@@ -91,5 +91,5 @@ export default async function AdminPage() {
     console.error('Error fetching employees in admin page:', error)
   }
 
-  return <AdminClient settings={settings} checkIns={checkIns} employees={employees} />
+  return <AdminClient role={session.role} settings={settings} checkIns={checkIns} employees={employees} />
 }

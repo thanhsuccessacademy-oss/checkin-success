@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { getMonthlyCheckins, checkInEmployee, signOutEmployee } from './actions'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { SuperadminNav } from '@/components/SuperadminNav'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
@@ -251,7 +252,7 @@ export default function DashboardClient({
     <div className="min-h-screen bg-background flex flex-col text-foreground">
       {/* Top Header */}
       <header className="border-b border-slate-200/80 bg-white/70 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Image
               src="/logo-success.png"
@@ -262,6 +263,8 @@ export default function DashboardClient({
               priority
             />
           </div>
+
+          {user.role === 'superadmin' && <SuperadminNav />}
 
           <div className="flex items-center gap-2">
             {user.role === 'admin' && (
